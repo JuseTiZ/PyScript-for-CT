@@ -72,7 +72,7 @@ def runphylo():
 	for batch in os.listdir(batchdir):
 		print(f"Processing with {batch}...")
 		os.system(f"sed -i 's/@/_/g' {batchdir}/{batch}/*")
-		os.system(f'python3 /data/zongjin/py/OTU_replace.py {batchdir}/{batch} /data/zongjin/data/analysis2/orp_pep/OrthoFinder/Results_Nov28/species.txt')
+		os.system(f'python3 /pathto/OTU_replace.py {batchdir}/{batch} /pathto/species.txt')
 		os.system(f'phylopypruner --dir {batchdir}/{batch} --min-len 100 --trim-lb 5 --threads {cpunum} \
 --min-support 0.75 --prune MI --min-taxa {mintax} \
 --trim-freq-paralogs 4 --trim-divergent 1.25 \
