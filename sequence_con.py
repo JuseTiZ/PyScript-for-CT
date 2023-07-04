@@ -26,7 +26,7 @@ for align in aligns:
 		tmp_species = []
 		for line in ali:
 			if line.startswith('>') and line.strip() != '>':
-                #如果物种名以下划线分割则替换为_
+				#如果物种名以下划线分割则替换为_
 				spe_name = line.split('@')[0].strip()
 
 				tmp_species.append(spe_name)
