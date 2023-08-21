@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # OTU_replace
-# Verson: 1.1
+# Verson: 1.2
 # This is used to replace OTU_ to OTU@ in fasta or treefile.
 # Usage: python3 OTU_replace.py dir species_list
 
@@ -31,24 +31,32 @@ def getArgs():
 
 def spe_list_get():
 
-	global spe_list
 	spe_list = []
 	with open(species_list, 'r') as s:
 		for line in s:
 			spe_list.append(line.strip())
+	return spe_list
 
 
-def run_replace(dir_path):
+def run_replace(dir_path, spe_list):
 
-	for spe in spe_list:
-		os.system(f"sed -i 's/{spe}_/{spe}@/g' *.fa*")
-		os.system(f"sed -i 's/{spe}_/{spe}@/g' *.tre*")
+    pattern = re.compile(r'(' + '|'.join(spe_list) + ')_')
+
+    for filename in os.listdir(dir_path):
+        if filename.endswith(('.fa', '.fasta', '.fas', '.tre', '.treefile')):
+            with open(os.path.join(dir_path, filename), 'r') as f:
+                content = f.read()
+
+            new_content = pattern.sub(r'\1@', content)
+
+            with open(os.path.join(dir_path, filename), 'w') as f:
+                f.write(new_content)
 
 def main():
 
 	getArgs()
-	spe_list_get()
-	run_replace(inputfiledir)
+	spe_list = spe_list_get()
+	run_replace(inputfiledir, spe_list)
 
 
 if __name__ == "__main__":
