@@ -1,4 +1,5 @@
-### Welcome to PyScipt for CT repository (English)
+
+## Welcome to PyScipt for CT repository (English)
 
 This repository houses a collection of Python scripts designed for comparative transcriptomics and phylotranscriptomics. Detailed usage instructions for most of these scripts are available on my blog, [Juse's Blog](https://biojuse.com/).
 
@@ -8,7 +9,7 @@ If you have any other requests for editing or formalizing content, feel free to 
 
 These scripts will be interpreted in alphabetical order by name.
 
-#### abbababa_test.py
+### abbababa_test.py
 
 This script executes an `ABBA-BABA test` utilizing phylogenetic tree data. It **benchmarks against the species tree, extracting all conceivable quartets of species**. The script methodically traverses each gene tree, tallying the occurrences of `ABBA` and `BABA` patterns. Subsequently, it calculates the D-statistic and conducts a Binomial test to assess statistical significance.
 
@@ -32,7 +33,7 @@ Example output:
 | ---- | ---- | ---- | ---- | ---------- | ---------- | ----------- | ------- | ----------- | ------------ | ------------ |
 | x    | x    | x    | x    | 5          | 4          | 0.111111111 | 1       | 82          | OG0009150... | OG0009299... |
 
-#### callCodeml.py
+### callCodeml.py
 
 For positive selection detection in batches (PAML).
 
@@ -58,7 +59,7 @@ Example of `result.csv`:
 | ----------------------- | ------------ | ------------ | ---- | ---- | ------- | ------ |
 | XP_027232673.1.paml.PML | -2280.164167 | -2280.164167 | 11   | 12   | 2.45436 | 1      |
 
-#### de.py
+### de.py
 
 A script for extracting DEGs written for files output by Trinity pipeline. If you want to change the screening criteria, you can make corresponding adjustments.
 
@@ -72,7 +73,7 @@ $ python de.py xxx.DE_results DEG_up.txt DEG_down.txt
 
 The output `DEG_up.txt` and `DEG_down.txt` are the lists of up-regulated and down-regulated DEGs respectively.
 
-#### enrichment_plot.py
+### enrichment_plot.py
 
 Pipeline for GO enrichment analysis and visualization (**for transcriptome with no reference**).
 
@@ -137,7 +138,7 @@ $ python enrichment_plot.py -c enrichment_analysis.csv \
 
 When using an existing csv for analysis.
 
-#### free-ratio-calcu.py & free-ratio-omega.py
+### free-ratio-calcu.py & free-ratio-omega.py
 
 Running free ratio model in batches.
 
@@ -172,7 +173,7 @@ File	A	B	C
 3	0.0653332	0.0288158	0.0296085
 ```
 
-#### generate_clade-defs.py
+### generate_clade-defs.py
 
 Generate clade definition file for DiscoVista, need to use with Juse's fork.
 
@@ -182,7 +183,7 @@ $ python generate_clade-defs.py anno-1.txt anno.txt
 
 Detail: [blog post](https://biojuse.com/2023/07/12/DiscoVista%20%E5%8F%AF%E8%A7%86%E5%8C%96%E7%B3%BB%E7%BB%9F%E5%8F%91%E8%82%B2%E4%B8%8D%E4%B8%80%E8%87%B4/).
 
-#### id_modification.py
+### id_modification.py
 
 Modify the id in the `fasta` file.
 
@@ -207,7 +208,7 @@ Choice of `-m` :
 
 This script should only be used for **transcriptome assembly**. `Biopython` is recommended for genome `fasta` sequences.
 
-#### longest_contig.py
+### longest_contig.py
 
 Extract the longest transcript from the **Trinity assembly**.
 
@@ -219,7 +220,7 @@ $ python longest_contig.py xxx.fasta longest.fasta
 
 Note that this script only works with Trinity output.
 
-#### mf2mrbayes.py
+### mf2mrbayes.py
 
 Convert Modelfinder results into a format that can be input into mrbayes. e.g.
 
@@ -259,7 +260,7 @@ prset applyto=(1) aamodelpr=fixed(jones);
 ......
 ```
 
-#### onego.py
+### onego.py
 
 Convert annotation files to one-to-one.
 
@@ -282,7 +283,7 @@ xxx1      GO:0003674
 xxx1      GO:0005488
 ```
 
-#### ortho_select.py
+### ortho_select.py
 
 Select orthogroup based on species number and sequence number. This script is designed for output of OrthoFinder but should be available for other situations.
 
@@ -301,7 +302,7 @@ $ python ortho_select.py -l 30 -b 20 -f /pathto/OrthoFinder/Results_xxx/Orthogro
 
 In the above use case, this command will generate two folders, `orthogroup_big` and `orthogroup_small`, in the `ortho_seq` folder.
 
-#### OTU_replace.py
+### OTU_replace.py
 
 Replace sequence id (`Spe_` to `Spe@`). 
 
@@ -335,11 +336,11 @@ Example:
 >Fish@xxxxxxxxx
 ```
 
-#### phylopypruner_batch.py
+### phylopypruner_batch.py
 
 Running phylopypruner in batches avoids a recursion error, which has been deprecated since it was fixed via PR.
 
-#### ref2spename.py
+### ref2spename.py
 
 Convert sequence files in RefSeq format to sequence format starting with the species name.
 
@@ -356,7 +357,7 @@ Example:
 >Homo_sapiens@NP_000005.3_alpha-2-macroglobulin_isoform_a_precursor # after
 ```
 
-#### sequence_con.py
+### sequence_con.py
 
 Concatenate sequences and generate partition files for IQTREE using this script.
 
@@ -378,7 +379,7 @@ Additionally, a log file `sequence_con.log` is generated, detailing the sequence
 
 For those seeking more comprehensive output information, consider downloading [JuseKit](https://github.com/JuseTiZ/JuseKit), a software I developed based on `PyQt5`. It not only includes the sequence concatenation function but also provides more detailed output.
 
-#### sliding_window.py
+### sliding_window.py
 
 This script is designed for calculating dN/dS/ω values across a sliding window, providing insights into the selection pressure on different regions **within a specific gene**.
 
@@ -446,7 +447,7 @@ Example Plot:
 
 ![](https://biojuse.com/pic/slwd.png)
 
-#### trim_filter.py
+### trim_filter.py
 
 Following alignment and trimming, some Multiple Sequence Alignments (MSAs) may exhibit reduced sequence length, potentially due to excessive trimming or the prevalence of gaps. These shortened MSAs often contain less informative content, making it prudent to filter them out to ensure only qualified MSAs are retained for subsequent analysis.
 
