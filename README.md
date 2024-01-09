@@ -9,6 +9,23 @@ If you have any other requests for editing or formalizing content, feel free to 
 
 These scripts will be interpreted in alphabetical order by name.
 
+- [abbababa_test.py](#abbababa_testpy)
+- [callCodeml.py](#callcodemlpy)
+- [de.py](#depy)
+- [enrichment_plot.py](#enrichment_plotpy)
+- [free-ratio-calcu.py & free-ratio-omega.py](#free-ratio-calcupy--free-ratio-omegapy)
+- [generate_clade-defs.py](#generate_clade-defspy)
+- [id_modification.py](#id_modificationpy)
+- [longest_contig.py](#longest_contigpy)
+- [onego.py](#onegopy)
+- [ortho_select.py](#ortho_selectpy)
+- [OTU_replace.py](#otu_replacepy)
+- [phylopypruner_batch.py](#phylopypruner_batchpy)
+- [ref2spename.py](#ref2spenamepy)
+- [sequence_con.py](#sequence_conpy)
+- [sliding_window.py](#sliding_windowpy)
+- [trim_filter.py](#trim_filterpy)
+
 ### abbababa_test.py
 
 This script executes an `ABBA-BABA test` utilizing phylogenetic tree data. It **benchmarks against the species tree, extracting all conceivable quartets of species**. The script methodically traverses each gene tree, tallying the occurrences of `ABBA` and `BABA` patterns. Subsequently, it calculates the D-statistic and conducts a Binomial test to assess statistical significance.
