@@ -15,6 +15,7 @@ These scripts will be interpreted in alphabetical order by name.
 - [enrichment_plot.py](#enrichment_plotpy)
 - [free-ratio-calcu.py & free-ratio-omega.py](#free-ratio-calcupy--free-ratio-omegapy)
 - [generate_clade-defs.py](#generate_clade-defspy)
+- [get_sites.py]((#get_sitespy))
 - [id_modification.py](#id_modificationpy)
 - [longest_contig.py](#longest_contigpy)
 - [onego.py](#onegopy)
@@ -199,6 +200,25 @@ $ python generate_clade-defs.py anno-1.txt anno.txt
 ```
 
 Detail: [blog post](https://biojuse.com/2023/07/12/DiscoVista%20%E5%8F%AF%E8%A7%86%E5%8C%96%E7%B3%BB%E7%BB%9F%E5%8F%91%E8%82%B2%E4%B8%8D%E4%B8%80%E8%87%B4/).
+
+### get_sites.py
+
+Extract genomic CpG site coordinate information.
+
+To run the example for extracting CpG sites located on chromosome 21 of the hg38 human genome, you would use the following command:
+
+```shell
+$ python get_sites.py -g hg38.fa -c chr21 --merge --gzip -n GRCh38
+```
+
+- `-g` specifies the reference genome sequence file. The script is capable of automatically recognizing `.gz` compressed format files.
+- `-c` is used to specify the chromosome from which you want to extract site information. This should match the sequence id within the sequence file.
+- `--merge` is an optional flag that, when used, calls `bedtools` to merge the output files after the site information has been extracted. It's important to note that this option requires `bedtools` to be installed and available in your environment path.
+- `--gzip` compresses the output files after the site information has been extracted (and merged, if `--merge` was specified).
+- `-n` allows you to specify a prefix for the output files. If not provided, the script defaults to using the prefix of the sequence file.
+- `-p` specifies the path where the output files will be saved. If this parameter is not given, the files are saved to the current working directory of the script.
+
+Additionally, if the `--onlycpg` flag is included in the command, the script will exclusively generate files for CpG site locations.
 
 ### id_modification.py
 
