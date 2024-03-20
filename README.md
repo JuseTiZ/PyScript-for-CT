@@ -15,7 +15,7 @@ These scripts will be interpreted in alphabetical order by name.
 - [enrichment_plot.py](#enrichment_plotpy)
 - [free-ratio-calcu.py & free-ratio-omega.py](#free-ratio-calcupy--free-ratio-omegapy)
 - [generate_clade-defs.py](#generate_clade-defspy)
-- [get_sites.py]((#get_sitespy))
+- [get_sites.py](#get_sitespy)
 - [id_modification.py](#id_modificationpy)
 - [longest_contig.py](#longest_contigpy)
 - [onego.py](#onegopy)
@@ -218,7 +218,10 @@ $ python get_sites.py -g hg38.fa -c chr21 --merge --gzip -n GRCh38
 - `-n` allows you to specify a prefix for the output files. If not provided, the script defaults to using the prefix of the sequence file.
 - `-p` specifies the path where the output files will be saved. If this parameter is not given, the files are saved to the current working directory of the script.
 
-Additionally, if the `--onlycpg` flag is included in the command, the script will exclusively generate files for CpG site locations.
+Additionally：
+
+- If the `--onlycpg` flag is included in the command, the script will exclusively generate files for CpG site locations.
+- If the `--nosoftmask` flag is included in the command, the script will skip soft-masked region (Treat as N).
 
 ### id_modification.py
 

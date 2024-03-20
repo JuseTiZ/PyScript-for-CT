@@ -7,13 +7,19 @@ import subprocess
 def get_args():
     parser = argparse.ArgumentParser(description="Use to extract AT/CG(nonCpG) & CpG sites.")
     
-    parser.add_argument("-g", "--genome", required=True, help="The path of genome sequence file.")
-    parser.add_argument("-c", "--chr", required=True, help="The target chromosome to extract.")
-    parser.add_argument("--onlycpg", action="store_true", help="Only extract CpG sites.")
-    parser.add_argument("--merge", action="store_true", help="Use bedtools to merge bed files.")
-    parser.add_argument("--gzip", action="store_true", help="Use gzip to compress output.")
-    parser.add_argument("-n", "--name", help="The name of output file.")
-    parser.add_argument("-p", "--path", help="The path of output file.", default='./')
+    input_group = parser.add_argument_group("Input")
+    input_group.add_argument("-g", "--genome", required=True, help="The path of genome sequence file.")
+    input_group.add_argument("-c", "--chr", required=True, help="The target chromosome to extract.")
+
+    option_group = parser.add_argument_group("Optional parameters")
+    option_group.add_argument("--onlycpg", action="store_true", help="Only extract CpG sites.")
+    option_group.add_argument("--merge", action="store_true", help="Use bedtools to merge bed files.")
+    option_group.add_argument("--gzip", action="store_true", help="Use gzip to compress output.")
+    option_group.add_argument("--nosoftmask", action="store_true", help="Remove soft-masked where repeats are in lower-case text.")
+
+    output_group = parser.add_argument_group("Output")
+    output_group.add_argument("-n", "--name", help="The name of output file.")
+    output_group.add_argument("-p", "--path", help="The path of output file.", default='./')
     
     args = parser.parse_args()
     if not args.name:
@@ -38,7 +44,10 @@ def main():
             for record in SeqIO.parse(genome_file, "fasta"):
                 if record.id != args.chr:
                     continue
-                seq = str(record.seq).upper()
+                if not args.nosoftmask:
+                    seq = str(record.seq).upper()
+                else:
+                    seq = str(record.seq)
 
                 for i, nuc in enumerate(seq):
                     if nuc == "N":
