@@ -10,6 +10,7 @@ If you have any other requests for editing or formalizing content, feel free to 
 These scripts will be interpreted in alphabetical order by name.
 
 - [abbababa_test.py](#abbababa_testpy)
+- [bedgraph_lowess.py](#bedgraph_lowesspy)
 - [callCodeml.py](#callcodemlpy)
 - [de.py](#depy)
 - [enrichment_plot.py](#enrichment_plotpy)
@@ -50,6 +51,36 @@ Example output:
 | p1   | p2   | p3   | o    | abba_count | baba_count | d_statistic | p_value | total_trees | abba_gene    | baba_gene    |
 | ---- | ---- | ---- | ---- | ---------- | ---------- | ----------- | ------- | ----------- | ------------ | ------------ |
 | x    | x    | x    | x    | 5          | 4          | 0.111111111 | 1       | 82          | OG0009150... | OG0009299... |
+
+### bedgraph_lowess.py
+
+This script is used for applying LOWESS smoothing to bedgraph files.
+
+Usage:
+
+```shell
+$ python bedgraph_lowess.py -i [input] -o [output] --span [span size] --chr [chrlist]
+```
+
+Parameter details:
+
+- `--input` or `-i`: Specifies the bedgraph file to be smoothed using LOWESS. This file should have exactly four columns, with the first column containing chromosome numbers that start with `chr`.
+- `--output` or `-o`: Specifies the output file for the smoothed bedgraph.
+- `--span`: Specifies the span size to be used for smoothing. The script will determine the proportion of data to be used for smoothing based on the total length of each chromosome (calculated as the difference between the last `end site` and the first `start site` in the bin).
+- `--chr`: Specifies the chromosome numbers for which smoothing should be applied. For example, to use only autosomes in human chromosomes, you can specify `1-22`, or use comma-separated values like `1-22,X,Y`.
+
+Please note that while smoothing reduces noise, it also results in some loss of information. Therefore, carefully consider your data when setting the `--span` parameter. Generally:
+
+- The higher the data resolution, the lower the value that should be set for this parameter, and vice versa.
+- The higher the requirement for detail, the lower the value that should be set for this parameter, and vice versa.
+
+Example:
+
+```shell
+$ python bedgraph_lowess.py -i RT.bedgraph -o RT.lowess.bedgraph --span 300000 --chr 1-19
+```
+
+![](https://biojuse.com/pic2/bedgraphlowess.png)
 
 ### callCodeml.py
 
