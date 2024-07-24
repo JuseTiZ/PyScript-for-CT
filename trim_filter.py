@@ -9,7 +9,6 @@ import os
 
 def get_args():
 
-	global args
 	parser = argparse.ArgumentParser(description = "This is used to filter alignment to build genetree, run in the directory.")
 	parser.add_argument("-s", "--seq", default = 80, type = int, help = "Deletes original seqs shorter than this length, default = 80.")
 	parser.add_argument("-a", "--align", default = 80, type = int, help = "Minimum length of a trimmed alignment in amino acids, default = 80.")
@@ -23,7 +22,7 @@ def remove_n(string, char):
 	return len(re.sub(char, '', string))
 
 
-def filter():
+def filter(args):
 
 	min_tax_num = args.tax
 	min_len_file = args.seq
@@ -77,9 +76,9 @@ def filter():
 
 def main():
 
-	get_args()
+	args = get_args()
 	try:
-		filter()
+		filter(args)
 	except:
 		print("Please check the position you are.")
 

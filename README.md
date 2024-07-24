@@ -22,7 +22,6 @@ These scripts will be interpreted in alphabetical order by name.
 - [onego.py](#onegopy)
 - [ortho_select.py](#ortho_selectpy)
 - [OTU_replace.py](#otu_replacepy)
-- [phylopypruner_batch.py](#phylopypruner_batchpy)
 - [ref2spename.py](#ref2spenamepy)
 - [sequence_con.py](#sequence_conpy)
 - [sliding_window.py](#sliding_windowpy)
@@ -406,10 +405,6 @@ Example:
 >Mouse@xxxxxxx
 >Fish@xxxxxxxxx
 ```
-
-### phylopypruner_batch.py
-
-Running phylopypruner in batches avoids a recursion error, which has been deprecated since it was fixed via PR.
 
 ### ref2spename.py
 

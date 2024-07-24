@@ -1,5 +1,4 @@
 import sys
-import re
 import os
 import time
 
@@ -28,14 +27,12 @@ time_start = time.strftime('%Y%m%d-%H%M%S')
 os.mkdir(f'SWworkdir_{time_start}')
 
 ogall = []
-
 for line in og_file:
 	oglist = [line.split('\t')[0], line.split('\t')[1].strip()]
 	ogall.append(oglist)
 
 
 def readfa(fasta):
-
 	id_seq = {}
 	with open(fasta, 'r') as fa:
 		for line in fa:
@@ -48,7 +45,6 @@ def readfa(fasta):
 
 
 def fa2axt(oglist, fasta, name):
-
 	axtname = '-'.join(oglist)
 	with open(f'{name}', 'w') as axt:
 		axt.write(f"{axtname}\n")
@@ -57,7 +53,6 @@ def fa2axt(oglist, fasta, name):
 
 
 def sliding(fasta, oglist, sli_len, gap_len, dire):
-
 	fa = readfa(fasta)
 	fa_len = len(list(fa.values())[0])
 
@@ -82,27 +77,22 @@ def sliding(fasta, oglist, sli_len, gap_len, dire):
 
 
 for oglist in ogall:
-
 	ogname = '-'.join(oglist)
 	outputdir = f'SWworkdir_{time_start}/{ogname}'
 	os.mkdir(outputdir)
 	
 	for gene in os.listdir(fa_dir):
-
 		genename = gene.split('.')[0]
 		os.mkdir(f'{outputdir}/{genename}')
 		sliding(f'{fa_dir}/{gene}', oglist, sli_len, gap_len, f'{outputdir}/{genename}')
 
 print("Sliding window completed...\nRunning Kaks_cal...")
-	
 os.system(f'for i in `ls SWworkdir_{time_start}/*/*/*/*axt`;do echo "KaKs -i $i -o $i.kaks -c {code_model}" >> sliding_window.command; done')
 os.system(f'cat sliding_window.command | parallel --no-notice -j {cpu_num}')
 os.system('rm sliding_window.command')
 print("Kaks_cal done\nMerging result...")
 
-
 def readkaks(kaksfile):
-
 	with open(kaksfile, 'r') as kf:
 		for line in kf:
 			if line.startswith("Sequence"):
@@ -114,25 +104,21 @@ def readkaks(kaksfile):
 
 
 for oglist in ogall:
-
 	ogname = '-'.join(oglist)
 	outputdir = f'SWworkdir_{time_start}/{ogname}'
 	sf_res = open(f'{outputdir}/sliding_window_{ogname}.res', 'w')
 	sf_res.write('Gene\tPosition\tType\tvalue\n')
 
 	for gene in os.listdir(outputdir):
-
 		genesf = f'{outputdir}/{gene}'
 		if os.path.isdir(genesf):
 			total_num = len(os.listdir(genesf))
 			
 			for i in range(1, total_num + 1):
-
 				kaksinfo = readkaks(f'{genesf}/posi_{i}/sliding_{i}.axt.kaks')
 				for v in kaksinfo:
 					sf_res.write(f'{gene}\t{i}\t{v}\t{kaksinfo[v]}\n')
 		else:
 			continue
-
 
 print("Finished.")
