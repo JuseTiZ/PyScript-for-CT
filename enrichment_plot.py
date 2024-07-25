@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # enrichment_plot.py
-# Verson: 1.0
+# Verson: 1.1
 # Author: Juse
 # Use R to plot enrichment dotplot.
 # Usage: See github.
@@ -11,7 +11,6 @@ import time
 
 def get_args():
 
-	global args
 	parser = argparse.ArgumentParser(description = "This is used to plot enrichment dotplot.")
 	parser.add_argument("-gef", "--genefore", type = str, help = "The gene list as foregroud.")
 	parser.add_argument("-geb", "--geneback", type = str, help = "The gene list and annotation as backgroud.")
@@ -22,38 +21,30 @@ def get_args():
 	parser.add_argument("-o", "--output", type = str, required = True, help = "The output directory, required.")
 	parser.add_argument("-t", "--title", default = 'NULL', type = str, help = "The title of plot, default = NULL.")
 	parser.add_argument("-c", "--csv", default = 'NULL', type = str, help = "Just plot with file given.")
-
 	args = parser.parse_args()
+	return args
 
 
-def get_path():
-
-	global fore_gene
-	global back_gene
-	global go_list
-	global output_dir
-	global csv_dir
-
-	# 获得各个路径
-	try:
-		fore_gene = os.path.abspath(args.genefore)
-		back_gene = os.path.abspath(args.geneback)
-		go_list = os.path.abspath(args.golist)
-	except:
-		print("Check if the csv file is provided...")
-		try:
-			csv_dir = os.path.abspath(args.csv)
-		except:
-			print("Check if you entered wrong path.")
-	try:
-		output_dir = os.path.abspath(args.output)
-	except:
-		print("Check if you entered wrong output path.")
+def get_path(args):
+	
+	if args.csv == 'NULL':
+		paths = {
+			'fore_gene': os.path.abspath(args.genefore),
+			'back_gene': os.path.abspath(args.geneback),
+			'go_list': os.path.abspath(args.golist),
+			'output_dir': os.path.abspath(args.output),
+		}
+	else:
+		paths = {
+			'output_dir': os.path.abspath(args.output),
+			'csv_dir': os.path.abspath(args.csv)
+		}
+     
+	return paths
 
 
-def R_code():
+def R_code(args, paths, run_time):
 
-	global r_code_use
 	rcode = '''
 
 # 加载包
@@ -83,12 +74,12 @@ gene_select <- gene_list$gene_id
 
 # 进行富集分析
 go_rich <- enricher(gene = gene_select,
-                    TERM2GENE = go_anno[c('ID','gene_id')],
-                    TERM2NAME = go_anno[c('ID','Description')],
-                    pvalueCutoff = 0.05,
-                    pAdjustMethod = 'BH',
-                    qvalueCutoff = 0.05,
-                    maxGSSize = 200) 
+					TERM2GENE = go_anno[c('ID','gene_id')],
+					TERM2NAME = go_anno[c('ID','Description')],
+					pvalueCutoff = 0.05,
+					pAdjustMethod = 'BH',
+					qvalueCutoff = 0.05,
+					maxGSSize = 200) 
 
 # 提取富集分析结果制成表格
 plot_data = cbind(go_rich$ID, go_rich$Description, go_rich$GeneRatio, go_rich$BgRatio, go_rich$Count, go_rich$p.adjust, go_rich$ID, go_rich$geneID)
@@ -96,16 +87,16 @@ colnames(plot_data) = c("ID", "Description", "GeneRatio", "BgRatio", "Count","qv
 plot_data = data.frame(plot_data)
 for(i in 1:length(plot_data$Ontology)){
   if(is.na(plot_data$Description[i])){
-    plot_data$Ontology[i] = 'NA'
+	plot_data$Ontology[i] = 'NA'
   }else{
-    plot_data$Ontology[i] = go_class$Ontology[go_class$ID == plot_data$ID[i]]
+	plot_data$Ontology[i] = go_class$Ontology[go_class$ID == plot_data$ID[i]]
   }
 }
 
 # 处理数据
 plot_data_noNA = plot_data[complete.cases(plot_data$Description),]
 plot_data_noNA = transform(plot_data_noNA, Count = as.numeric(Count),
-                           qvalue = as.numeric(qvalue))
+						   qvalue = as.numeric(qvalue))
 plot_data_noNA = plot_data_noNA[order(plot_data_noNA$qvalue,-plot_data_noNA$Count),]
 plot_data_noNA$Ontology[plot_data_noNA$Ontology == "cellular_component"] = "Cellular Component"
 plot_data_noNA$Ontology[plot_data_noNA$Ontology == "biological_process"] = "Biological Process"
@@ -117,22 +108,22 @@ BP = 0
 MF = 0
 for(i in 1:length(plot_data_noNA$Ontology)){
   if(plot_data_noNA$Ontology[i] == "Cellular Component"){
-    CC = CC + 1
-    if(CC <= 5){
-      Top15 = append(Top15,(i))
-    }
+	CC = CC + 1
+	if(CC <= 5){
+	  Top15 = append(Top15,(i))
+	}
   }
   if(plot_data_noNA$Ontology[i] == "Biological Process"){
-    BP = BP + 1
-    if(BP <= 5){
-      Top15 = append(Top15,(i))
-    }
+	BP = BP + 1
+	if(BP <= 5){
+	  Top15 = append(Top15,(i))
+	}
   }
   if(plot_data_noNA$Ontology[i] == "Molecular Function"){
-    MF = MF + 1
-    if(MF <= 5){
-      Top15 = append(Top15,(i))
-    }
+	MF = MF + 1
+	if(MF <= 5){
+	  Top15 = append(Top15,(i))
+	}
   }
 }
 
@@ -165,30 +156,22 @@ write.csv(plot_data,file="output%3%")
 
 '''
 
-	r_code_use = rcode.replace("%juse%1", go_list)\
-		.replace("%juse%2", back_gene)\
-		.replace("%juse%3", fore_gene)\
+	r_code_use = rcode.replace("%juse%1", paths['go_list'])\
+		.replace("%juse%2", paths['back_gene'])\
+		.replace("%juse%3", paths['fore_gene'])\
 		.replace("%juse%4", args.width)\
 		.replace("%juse%5", args.height)\
 		.replace("%juse%6", args.yaxis)\
 		.replace("%juse%7", args.title)\
-		.replace("output%1%", f"{output_dir}/{run_time}/enrichment_plot.pdf")\
-		.replace("output%2%", f"{output_dir}/{run_time}/enrichment_plot_top10.pdf")\
-		.replace("output%3%", f"{output_dir}/{run_time}/enrichment_analysis.csv")\
+		.replace("output%1%", f"{paths['output_dir']}/{run_time}/enrichment_plot.pdf")\
+		.replace("output%2%", f"{paths['output_dir']}/{run_time}/enrichment_plot_top10.pdf")\
+		.replace("output%3%", f"{paths['output_dir']}/{run_time}/enrichment_analysis.csv")\
+	
+	return r_code_use
 
 
-def run_R():
+def plot_R(args, paths, run_time):
 
-
-	os.mkdir(f'{output_dir}/{run_time}')
-	with open(f'{output_dir}/{run_time}/enrichment_plot.R', 'w') as f:
-		f.write(r_code_use)
-	os.system(f'Rscript {output_dir}/{run_time}/enrichment_plot.R')
-
-
-def plot_R():
-
-	global r_code_use
 	rcode = '''
 
 # 加载包
@@ -204,7 +187,7 @@ title = "%juse%7"
 # 处理数据
 plot_data_noNA = plot_data_noNA[complete.cases(plot_data_noNA$Description),]
 plot_data_noNA = transform(plot_data_noNA, Count = as.numeric(Count),
-                           qvalue = as.numeric(qvalue))
+						   qvalue = as.numeric(qvalue))
 plot_data_noNA = plot_data_noNA[order(plot_data_noNA$qvalue,-plot_data_noNA$Count),]
 plot_data_noNA$Ontology[plot_data_noNA$Ontology == "cellular_component"] = "Cellular Component"
 plot_data_noNA$Ontology[plot_data_noNA$Ontology == "biological_process"] = "Biological Process"
@@ -216,22 +199,22 @@ BP = 0
 MF = 0
 for(i in 1:length(plot_data_noNA$Ontology)){
   if(plot_data_noNA$Ontology[i] == "Cellular Component"){
-    CC = CC + 1
-    if(CC <= 5){
-      Top15 = append(Top15,(i))
-    }
+	CC = CC + 1
+	if(CC <= 5){
+	  Top15 = append(Top15,(i))
+	}
   }
   if(plot_data_noNA$Ontology[i] == "Biological Process"){
-    BP = BP + 1
-    if(BP <= 5){
-      Top15 = append(Top15,(i))
-    }
+	BP = BP + 1
+	if(BP <= 5){
+	  Top15 = append(Top15,(i))
+	}
   }
   if(plot_data_noNA$Ontology[i] == "Molecular Function"){
-    MF = MF + 1
-    if(MF <= 5){
-      Top15 = append(Top15,(i))
-    }
+	MF = MF + 1
+	if(MF <= 5){
+	  Top15 = append(Top15,(i))
+	}
   }
 }
 
@@ -262,29 +245,33 @@ dev.off()
 
 '''
 
-	r_code_use = rcode.replace("%juse%1", csv_dir)\
+	r_code_use = rcode.replace("%juse%1", paths['csv_dir'])\
 		.replace("%juse%4", args.width)\
 		.replace("%juse%5", args.height)\
 		.replace("%juse%6", args.yaxis)\
 		.replace("%juse%7", args.title)\
-		.replace("output%1%", f"{output_dir}/{run_time}/enrichment_plot.pdf")\
-		.replace("output%2%", f"{output_dir}/{run_time}/enrichment_plot_top10.pdf")\
+		.replace("output%1%", f"{paths['output_dir']}/{run_time}/enrichment_plot.pdf")\
+		.replace("output%2%", f"{paths['output_dir']}/{run_time}/enrichment_plot_top10.pdf")\
+		
+	return r_code_use
+
+def run_r_script(r_code, paths, run_time):
+	os.makedirs(f"{paths['output_dir']}/{run_time}", exist_ok=True)
+	script_path = f"{paths['output_dir']}/{run_time}/enrichment_plot.R"
+	with open(script_path, 'w') as f:
+		f.write(r_code)
+	os.system(f'Rscript {script_path}')
 
 
 def main():
 
-	global run_time
 	run_time = time.strftime('%Y%m%d-%H%M%S')
-	get_args()
-	get_path()
-	if args.csv == 'NULL':
-		R_code()
-	else:
-		plot_R()
-	run_R()
+	args = get_args()
+	paths = get_path(args)
+	r_code = R_code(args, paths, run_time) if args.csv == 'NULL' else plot_R(args, paths, run_time)
+	run_r_script(r_code, paths, run_time)
+	print(f'Finished! See output at {paths["output_dir"]}')
 
 
 if __name__ == "__main__":
-
 	main()
-	print(f'Finished! See output at {output_dir}')
